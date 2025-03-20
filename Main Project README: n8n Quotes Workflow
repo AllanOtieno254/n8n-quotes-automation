@@ -1,0 +1,161 @@
+# Main Project README: n8n Quotes Workflow
+
+## Project Overview
+This n8n workflow fetches quotes from an API, processes them, and applies various operations like filtering, selecting a random quote, and indexing quotes. It is designed to automate quote retrieval and processing.
+
+## Workflow Structure
+The workflow consists of the following nodes:
+
+1. **Schedule Trigger** - Triggers the workflow at scheduled intervals.
+2. **HTTP Request** - Fetches quotes from an API.
+3. **Split Out** - Splits the received quotes into individual items.
+4. **Code Node 1** - Filters quotes that contain the word "life."
+5. **Code Node 2** - Picks a random quote from the list.
+6. **Code Node 3** - Adds an index to each quote.
+
+---
+
+## 1. Schedule Trigger
+### Description
+The Schedule Trigger node starts the workflow at predefined intervals.
+
+### Configuration
+- **Interval:** Set to trigger at specific times (e.g., every hour, daily, etc.)
+- **Execution Mode:** Recurring
+
+### How it Works
+Once triggered, this node activates the HTTP Request node.
+
+---
+
+## 2. HTTP Request
+### Description
+This node fetches 30 quotes from an API.
+
+### API Used
+- Endpoint: `https://qapi.vercel.app/api/quotes`
+- Method: `GET`
+
+### Configuration
+- **Method:** GET
+- **Headers:** None required
+- **Query Parameters:** None
+
+### How it Works
+This node retrieves a JSON response containing 30 quotes, which are then passed to the Split Out node.
+
+---
+
+## 3. Split Out
+### Description
+This node takes the array of quotes and splits them into individual items.
+
+### Configuration
+- **Mode:** Split into separate items
+
+### How it Works
+Each quote is processed as an independent item, making it easier to filter or modify them.
+
+---
+
+## 4. Code Node: Filtering Quotes by Keyword "Life"
+### Description
+This node filters quotes that contain the word "life."
+
+### Code Implementation
+```javascript
+let items = $input.all();
+return items.filter(item => item.json.quote.includes("life")).map(item => ({ json: item.json }));
+```
+
+### How it Works
+The script scans each quote for the keyword "life" and returns only matching results.
+
+---
+
+## 5. Code Node: Picking a Random Quote
+### Description
+This node selects a random quote from the list.
+
+### Code Implementation
+```javascript
+let items = $input.all();
+let randomIndex = Math.floor(Math.random() * items.length);
+return [{ json: items[randomIndex].json }];
+```
+
+### How it Works
+- The script picks a random index from the list of quotes.
+- It returns the quote corresponding to the randomly chosen index.
+
+---
+
+## 6. Code Node: Adding an Index to Quotes
+### Description
+This node adds an index number to each quote.
+
+### Code Implementation
+```javascript
+let items = $input.all();
+return items.map((item, index) => {
+    return {
+        json: {
+            index: index + 1,
+            quote: item.json.quote
+        }
+    };
+});
+```
+
+### How it Works
+- Loops through all quotes
+- Adds an `index` field starting from 1
+- Outputs a modified quote object
+
+---
+
+## Running the Workflow
+1. **Set up the n8n instance** (Cloud/Self-hosted)
+2. **Import the workflow** in n8n
+3. **Run the test workflow**
+4. **Monitor the output of each node**
+5. **Deploy the workflow for automation**
+
+---
+
+## Troubleshooting
+- **No quotes received?** Ensure the API endpoint is reachable.
+- **Incorrect filtering?** Check the case sensitivity and spacing in keyword search.
+- **Random selection error?** Ensure the quotes array is not empty.
+
+---
+
+## Future Improvements
+- Add more filters (e.g., quotes by author)
+- Store quotes in a database
+- Integrate with a chatbot
+- Send daily quotes via email or messaging apps
+
+---
+
+## License
+This project is licensed under the MIT License.
+
+---
+
+## Repository Structure
+```
+/n8n-quotes-workflow
+│── README.md  (Main project documentation)
+│── schedule-trigger.md
+│── http-request.md
+│── split-out.md
+│── code-filter-quotes.md
+│── code-random-quote.md
+│── code-add-index.md
+```
+
+---
+
+Each of the individual `README.md` files will document their respective nodes with setup instructions and code breakdowns.
+
