@@ -1,0 +1,20 @@
+📁 n8n-quotes-automation
+│── 📂 workflow
+│   ├── n8n-workflow.json  # Exported n8n workflow file
+│   ├── workflow-diagram.png  # Screenshot of your workflow
+│
+│── 📂 src
+│   ├── process_quotes.js  # JavaScript functions for quotes processing
+│   ├── README.md  # Documentation
+│
+│── 📂 assets
+│   ├── screenshots/  # Folder to store images
+│   ├── demo.gif  # Demo GIF showing the automation in action
+│
+│── 📂 docs
+│   ├── setup.md  # Guide to set up n8n workflow
+│   ├── API_source.md  # Information about the quote API used
+│
+│── LICENSE  # License file
+│── .gitignore  # Ignore unnecessary files
+│── README.md  # Main documentation file
