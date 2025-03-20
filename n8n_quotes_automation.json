@@ -1,0 +1,147 @@
+{
+  "name": "n8n-quotes-automation",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://qapi.vercel.app/api/quotes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        40
+      ],
+      "id": "92951ae0-2736-423e-98cf-74cc30c93124",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "quote",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        460,
+        40
+      ],
+      "id": "8e6b5c4b-c6b1-43b0-a4f6-f8255acd1d93",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "let items = $input.all();\n\nlet randomQuote = items[Math.floor(Math.random() * items.length)];\n\nreturn [{\n    json: randomQuote.json\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        -40
+      ],
+      "id": "e6141509-6d3f-4639-8820-9d7da4f892db",
+      "name": "Code: picking a random quote"
+    },
+    {
+      "parameters": {
+        "jsCode": "let items = $input.all();\n\nreturn items\n    .filter(item => item.json.quote.toLowerCase().includes(\"life\"))\n    .map(item => {\n        return {\n            json: item.json\n        };\n    });\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        -280
+      ],
+      "id": "61f61d7e-96fe-462b-becf-a7f222cc93ae",
+      "name": "Code1: filtering quotes by keyword \"life\""
+    },
+    {
+      "parameters": {
+        "jsCode": "let items = $input.all();\n\nreturn items.map((item, index) => {\n    return {\n        json: {\n            id: index + 1,\n            quote: item.json.quote\n        }\n    };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        980,
+        220
+      ],
+      "id": "b0d786e9-86f8-450a-8454-755b7e423700",
+      "name": "Code2: Adding index in quotes"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -40,
+        40
+      ],
+      "id": "ecad21f5-9c28-4f3a-8bc6-4d7c651139f6",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Code: picking a random quote",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code1: filtering quotes by keyword \"life\"",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code2: Adding index in quotes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c87477ec-f84f-4e19-8a90-8de6556bd5ea",
+  "meta": {
+    "instanceId": "56bb8debe5655af0b034db72add1dabacff2b96f1192dd58a329af44e616656f"
+  },
+  "id": "ge84xlrHwLDMAtwC",
+  "tags": []
+}
